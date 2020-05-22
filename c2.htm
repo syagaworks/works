@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>c2 </title>
+<script type = "text/javascript">
+var ctx1;
+var ctx2;
+var ctx3;
+var canvas1;
+var canvas2;
+var canvas3;
+var gcycle;
+posttile = new Array(22);
+for(gcycle = 0; gcycle < 22; gcycle++){
+	posttile[gcycle] = new Array(22);
+}
+var blocksize = [119, 87, 67, 59, 51, 47, 43, 41, 39, 39, 33, 31, 29, 27, 25, 23, 23, 21, 21];
+var blocknumber;
+var linenumber;
+var start;
+var linewidth;
+var level = 0;
+var next = 0;
+function main(){
+	var tx1;
+	var tx2;
+	var tx3;
+	canvas1 = document.getElementById('id_canvas1');
+	tx1 = canvas1.getContext('2d');
+	ctx1 = tx1;
+	canvas2 = document.getElementById('id_canvas2');
+	tx2 = canvas2.getContext('2d');
+	ctx2 = tx2;
+	canvas2.addEventListener('click',clickfunc,true);
+	canvas3 = document.getElementById('id_canvas3');
+	tx3 = canvas3.getContext('2d');
+	ctx3 = tx3;
+	ctx1.fillStyle = 'rgb(109, 201, 84)';
+	ctx1.fillRect(0,0,600,441);
+	ctx1.fillStyle = 'rgb(0, 0, 0)';
+	ctx1.font = "50px 'Times New Roman'";
+  	ctx1.fillText("C2", 250, 120);
+	ctx1.fillRect(450, 370, 130, 20);
+	ctx1.fillRect(450, 400, 130, 20);
+	ctx1.fillStyle = 'rgb(255, 255, 255)';
+	ctx1.font = "20px 'Times New Roman'";
+	ctx1.fillText("Start", 500, 385);
+	ctx1.fillText("How to play", 465, 415);
+}
+function clickfunc(event){
+	var count;
+	var a;
+	var x;
+	var y;
+	var rect;
+	var xpiece;
+	var ypiece;
+	var cycle;
+	var cycle2;
+	var cycle3;
+	var count;
+	var up;
+	var down;
+	var right;
+	var left;
+	var source;
+	var tile;
+	var pretile;
+	source = new Array(800);
+	tile = new Array(22);
+	for(cycle = 0; cycle < 22; cycle++){
+		tile[cycle] = new Array(22);
+	}
+	pretile = new Array(22);
+	for(cycle = 0; cycle < 22; cycle++){
+		pretile[cycle] = new Array(22);
+	}
+	for(cycle = 0; cycle < 22; cycle++){
+		for(cycle2 = 0; cycle2 < 22; cycle2++){
+			pretile[cycle][cycle2] = new Array(2);
+		}
+	}
+	rect = event.target.getBoundingClientRect();
+	x = event.clientX - rect.left;
+	y = event.clientY - rect.top;
+	xpiece = Math.floor((x-start-1)/(blocksize[level]+1));
+	ypiece = Math.floor((y-start-1)/(blocksize[level]+1));
+	if(x >= 450 && x <= 580 && y >= 400 && y <= 420){
+		ctx1.fillStyle = 'rgb(109, 201, 84)';
+		ctx1.fillRect(0,0,600,441);
+		ctx1.fillStyle = 'rgb(0, 0, 0)';
+		ctx1.font = "23px 'Times New Roman'";
+	  	ctx1.fillText("1. Connect the lines as no tips are left between the tiles.", 10, 40);
+		ctx1.fillText("2. Goal: Level 18", 10, 70);
+		ctx1.fillText("Reference", 10, 110);
+		ctx1.fillText("http://www.kongregate.com/games/ahnt/loops-of-zen", 10,140);
+		ctx1.fillText("http://homepage2.nifty.com/t_ishii/site/html5game/", 10, 165);
+		ctx1.fillRect(450, 370, 130, 20);
+		ctx1.fillStyle = 'rgb(255, 255, 255)';
+		ctx1.font = "20px 'Times New Roman'";
+		ctx1.fillText("Start", 500, 385);
+	}else if((x >= 450 && x <= 580 && y >=370 && y <= 390) || next == 1){
+		next = 0;
+		blocknumber = level+2;
+		start = (441-(blocksize[level]*blocknumber+blocknumber+1))/2;
+		linewidth = Math.floor(blocksize[level]*0.15);
+		linenumber = Math.floor((level+2)*(level+1)*0.8);
+		ctx1.fillStyle = 'rgb(109, 201, 84)';
+		ctx1.fillRect(0,0,600,441);
+		ctx2.fillStyle = 'rgb(155, 187, 89)';
+		ctx2.fillRect(start, start, 441-start*2, 441-start*2);
+		ctx1.fillStyle = 'rgb(20,20,20)';
+		ctx1.fillRect(0,0,441,441);
+		ctx1.fillStyle = 'rgb(0, 0, 0)';
+		ctx1.fillRect(450, 320, 130, 20);
+		ctx1.fillRect(450, 370, 130, 20);
+		ctx1.fillStyle = 'rgb(255, 255, 255)';
+		ctx1.font = "20px 'Times New Roman'";
+		ctx1.fillText("Hint", 500, 335);
+		ctx1.fillText("Reset", 500, 385);
+		ctx1.fillStyle = 'rgb(0, 0, 0)';
+		if(level == 19){
+		  	ctx1.fillText("Owari", 450, 100);
+		}else{
+		  	ctx1.fillText("Level "+level, 450, 100);
+		}		
+		ctx1.font = "30px 'Times New Roman'";
+	  	ctx1.fillText("C2", 470, 50);
+		for(cycle = 0; cycle < 800; cycle++){
+			source[cycle] = 0;
+		}
+		for(cycle3 = 0; cycle3 < 21; cycle3++){
+			for(cycle2 = 0; cycle2 < 21; cycle2++){
+				tile[cycle3][cycle2] = 0;
+				posttile[cycle3][cycle2] = 0;
+				for(cycle = 0; cycle < 2; cycle++){
+					pretile[cycle3][cycle2][cycle] = 0;
+				}
+			}
+		}
+		for(cycle = 0; cycle < linenumber;){
+			count = Math.floor(Math.random() * blocknumber*blocknumber*2);
+			if(source[count] == 0){
+				source[count] = 1;
+				pretile[Math.floor(count/blocknumber) - Math.floor(count/(blocknumber*blocknumber))*blocknumber+1][count%blocknumber+1][Math.floor(count/(blocknumber*blocknumber))] = 1;
+				cycle++;
+			}
+		}
+		for(cycle = 0; cycle < blocknumber+1; cycle++){
+			pretile[cycle][blocknumber][1] = 0;
+			pretile[blocknumber][cycle][0] = 0;
+		}
+		for(cycle2 = 0; cycle2 < blocknumber; cycle2++){
+			for(cycle = 0; cycle < blocknumber; cycle++){
+				left = pretile[cycle][cycle2+1][0];
+				right = pretile[cycle+1][cycle2+1][0];
+				up = pretile[cycle+1][cycle2][1]; 
+				down = pretile[cycle+1][cycle2+1][1];
+				if(left == 1 && right == 1 && up == 1 && down == 1){
+					tile[cycle][cycle2] = 0;
+				}else if(down == 1 && right == 1 && up == 1){
+					tile[cycle][cycle2] = 1;
+				}else if(left == 1 && right == 1 && down == 1){
+					tile[cycle][cycle2] = 2;
+				}else if(left == 1 && up == 1 && down == 1){
+					tile[cycle][cycle2] = 3;
+				}else if(right == 1 && up == 1 && left == 1){
+					tile[cycle][cycle2] = 4;
+				}else if(right == 1 && down == 1){
+					tile[cycle][cycle2] = 5;
+				}else if(left == 1 && down == 1){
+					tile[cycle][cycle2] = 6;
+				}else if(up == 1 && left == 1){
+					tile[cycle][cycle2] = 7;
+				}else if(right == 1 && up == 1){
+					tile[cycle][cycle2] = 8;
+				}else if(up == 1 && down == 1){
+					tile[cycle][cycle2] = 9;
+				}else if(left == 1 && right == 1){
+					tile[cycle][cycle2] = 10;
+				}else if(right == 1){
+					tile[cycle][cycle2] = 11;
+				}else if(down == 1){
+					tile[cycle][cycle2] = 12;
+				}else if(left == 1){
+					tile[cycle][cycle2] = 13;
+				}else if(up == 1){
+					tile[cycle][cycle2] = 14;
+				}else{
+					tile[cycle][cycle2] = 15;
+				} 
+			}
+		}
+		for(cycle2 = 0; cycle2 < blocknumber; cycle2++){
+			for(cycle = 0; cycle < blocknumber; cycle++){
+				count = Math.floor(Math.random() * 4);
+				count2 = tile[cycle][cycle2];
+				for(cycle3 = 0; cycle3 < count; cycle3++){
+					count2 = converge(count2);
+				}
+				posttile[cycle][cycle2] = count2;
+			}
+		}
+		
+		for(cycle2 = 0; cycle2 < blocknumber; cycle2++){
+			for(cycle = 0; cycle < blocknumber; cycle++){
+				ctx2.fillStyle = 'rgb(128, 100, 162)'; 
+				redraw(cycle, cycle2);
+			}
+		}
+	}else if(x >= 450 && x <= 580 && y >= 320 && y <= 340){
+		for(cycle2 = 0; cycle2 < blocknumber; cycle2++){
+			for(cycle = 0; cycle < blocknumber; cycle++){
+				if(fieldcheck(cycle, cycle2) == 0){
+					ctx2.fillStyle = 'rgb(128, 100, 162)'; 
+				}else if(fieldcheck(cycle, cycle2) == 1){
+					ctx2.fillStyle = 'rgb(203, 34, 34)';
+				}
+				redraw(cycle, cycle2);
+			}
+		}
+	}else if(x > start && y > start && x < 441-start && y < 441-start){
+		posttile[xpiece][ypiece] = converge(posttile[xpiece][ypiece]);
+		ctx2.fillStyle = 'rgb(128, 100, 162)'; 
+		redraw(xpiece, ypiece);
+		count = 0;
+		for(cycle2 = 0; cycle2 < blocknumber; cycle2++){
+			for(cycle = 0; cycle < blocknumber; cycle++){
+				if(fieldcheck(cycle, cycle2) == 1){
+					count = 1;
+				}
+			}
+		}
+		if(count == 0){
+			drawfinish();
+			level++;
+			next = 1;
+		}
+	}
+}
+var fieldcheck = function(cycle, cycle2){
+	var count = 0;
+	if(cycle == 0){
+		if(leftjudge(cycle, cycle2) == 1){
+			count = 1;
+		}
+	}else{
+		if(leftjudge(cycle, cycle2) == 1 && rightjudge(cycle-1, cycle2) == 0){
+			count= 1;
+		}
+	}
+	if(cycle == blocknumber-1){
+		if(rightjudge(cycle, cycle2) == 1 ){
+			count = 1;
+		}
+	}else{
+		if(rightjudge(cycle, cycle2) == 1 && leftjudge(cycle+1, cycle2) == 0){
+			count = 1;
+		}
+	}
+	if(cycle2 == 0){
+		if(upperjudge(cycle, cycle2) == 1){
+			count = 1;
+		}
+	}else{
+		if(upperjudge(cycle, cycle2) == 1 && lowerjudge(cycle, cycle2-1) == 0){
+			count = 1;
+		}
+	}
+	if(cycle2 == blocknumber-1){
+		if(lowerjudge(cycle, cycle2) == 1){
+			count = 1;
+		}
+	}else{
+		if(lowerjudge(cycle, cycle2) == 1 && upperjudge(cycle, cycle2+1) == 0){
+			count = 1;
+		}
+	}
+	return count;
+}
+var leftside = function(a,b){
+	ctx2.beginPath();
+	ctx2.moveTo(start+a*(blocksize[level]+1)+1, start+b*(blocksize[level]+1)+((blocksize[level]-1)/2)+2);
+	ctx2.lineTo(start+a*(blocksize[level]+1)+(blocksize[level]-1)/2+(linewidth-1)/2+2, start+b*(blocksize[level]+1)+((blocksize[level]-1)/2)+2);
+	ctx2.stroke();
+	return 0;
+}
+var upper = function(a, b){
+	ctx2.beginPath();
+	ctx2.moveTo(start+a*(blocksize[level]+1)+((blocksize[level]-1)/2)+2, start+b*(blocksize[level]+1)+1);
+	ctx2.lineTo(start+a*(blocksize[level]+1)+((blocksize[level]-1)/2)+2, start+b*(blocksize[level]+1)+(blocksize[level]-1)/2+(linewidth-1)/2+2);
+	ctx2.stroke();
+	return 0;
+}
+var rightside = function(a, b){
+	ctx2.beginPath();
+	ctx2.moveTo(start+a*(blocksize[level]+1)+(blocksize[level]-1)/2-(linewidth-1)/2+1, start+b*(blocksize[level]+1)+((blocksize[level]-1)/2)+2);
+	ctx2.lineTo(start+a*(blocksize[level]+1)+(blocksize[level]+1), start+b*(blocksize[level]+1)+((blocksize[level]-1)/2)+2);
+	ctx2.stroke();
+	return 0;
+}
+var lower = function(a, b){
+	ctx2.beginPath();
+	ctx2.moveTo(start+a*(blocksize[level]+1)+((blocksize[level]-1)/2)+2, start+b*(blocksize[level]+1)+(blocksize[level]-1)/2-(linewidth-1)/2+1);
+	ctx2.lineTo(start+a*(blocksize[level]+1)+((blocksize[level]-1)/2)+2, start+b*(blocksize[level]+1)+(blocksize[level]+1));
+	ctx2.stroke();
+	return 0;
+}
+var converge = function(a){
+	
+	var data = [0, 2, 3, 4, 1, 6, 7, 8, 5, 10, 9, 12, 13, 14, 11, 15];
+	return data[a];
+}
+function redraw(cycle, cycle2){
+	ctx2.fillRect(start+cycle*(blocksize[level]+1)+1, start+cycle2*(blocksize[level]+1)+1, blocksize[level], blocksize[level]);
+	ctx2.fillStyle = 'rgb(255, 255, 255)';
+	ctx2.lineWidth = linewidth;
+	switch(posttile[cycle][cycle2]){
+	case 0:
+		leftside(cycle, cycle2);
+		rightside(cycle, cycle2);
+		upper(cycle, cycle2);
+		lower(cycle, cycle2);
+		break;
+	case 1:
+		rightside(cycle, cycle2);
+		upper(cycle, cycle2);
+		lower(cycle, cycle2);
+		break;
+	case 2:
+		leftside(cycle, cycle2);
+		rightside(cycle, cycle2);
+		lower(cycle, cycle2);
+		break;
+	case 3:
+		leftside(cycle, cycle2);
+		upper(cycle, cycle2);
+		lower(cycle, cycle2);
+		break;
+	case 4:
+		leftside(cycle, cycle2);
+		rightside(cycle, cycle2);
+		upper(cycle, cycle2);
+		break;
+	case 5:
+		rightside(cycle, cycle2);
+		lower(cycle, cycle2);
+		break;
+	case 6:
+		leftside(cycle, cycle2);
+		lower(cycle, cycle2);
+		break;
+	case 7:
+		leftside(cycle, cycle2);
+		upper(cycle, cycle2);
+		break;
+	case 8:
+		rightside(cycle, cycle2);
+		upper(cycle, cycle2);
+		break;
+	case 9:
+		upper(cycle, cycle2);
+		lower(cycle, cycle2);
+		break;
+	case 10:
+		leftside(cycle, cycle2);
+		rightside(cycle, cycle2);
+		break;
+	case 11:
+		rightside(cycle, cycle2);
+		break;
+	case 12:
+		lower(cycle, cycle2);
+		break;
+	case 13:
+		leftside(cycle, cycle2);
+		break;
+	case 14:
+		upper(cycle, cycle2);
+		break;
+	}
+}
+function upperjudge(cycle, cycle2){//ƒ^ƒCƒ‹‚Ìã‚ªo‚Ä‚¢‚é‚Æ‚«‚PA‚È‚¢‚Æ‚«‚O
+	var a;
+	a = posttile[cycle][cycle2];
+	if(a == 0 || a == 1 || a == 3 || a == 4 || a == 7 || a == 8 || a == 9 || a == 14){
+		return 1;
+	}else{
+		return 0;
+	}
+}
+function lowerjudge(cycle, cycle2){//ƒ^ƒCƒ‹‚Ì‰º‚ªo‚Ä‚¢‚é‚Æ‚«‚PA‚È‚¢‚Æ‚«‚O
+	var a;
+	a = posttile[cycle][cycle2];
+	if(a == 0 || a == 1 || a == 2 || a ==  3 || a == 5 || a == 6 || a == 9  || a == 12){
+		return 1;
+	}else{
+		return 0;
+	}
+}
+function rightjudge(cycle, cycle2){//ƒ^ƒCƒ‹‚Ì‰E‚ªo‚Ä‚¢‚é‚Æ‚«‚PA‚È‚¢‚Æ‚«‚O
+	var a;
+	a = posttile[cycle][cycle2];
+	if(a == 0 || a == 1 || a == 2 || a == 4 || a == 5 || a == 8  || a == 10 || a == 11){
+		return 1;
+	}else{
+		return 0;
+	}
+}
+function leftjudge(cycle, cycle2){//ƒ^ƒCƒ‹‚Ì¶‚ªo‚Ä‚¢‚é‚Æ‚«‚PA‚È‚¢‚Æ‚«‚O
+	var a;
+	a = posttile[cycle][cycle2];
+	if(a == 0 || a == 2 || a == 3 || a == 4 || a == 6 || a == 7 || a == 10 || a == 13){
+		return 1;
+	}else{
+		return 0;
+	}
+}
+function drawfinish() {
+  var str;
+	var tm;
+  var imagedata;
+  var datasize;
+	var pos;
+  imagedata = ctx2.getImageData(start,start,441-start,441-start);
+  datasize = (441-start*2)*(441-start*2)*6;
+  for (pos = 0; pos < datasize;) {
+    imagedata.data[pos++] /= 2;
+    imagedata.data[pos++] /= 2;
+    imagedata.data[pos++] /= 2;
+    pos += 1;
+  }
+  ctx2.putImageData(imagedata, start, start);
+  ctx2.fillStyle = "rgb(255,255,255)";
+  ctx2.font = "20px 'Times New Roman'";
+ if(level == 18){
+	str = "http://kigisu.github.io/owari.jpg";
+ }else{
+  str = "Completed!!";
+ }
+  tm = ctx2.measureText(str);
+  ctx2.fillText(str,(441-tm.width)/2,441/2+10);
+}
+</script>
+</head>
+<body onload = "main();">
+	<canvas id = "id_canvas1" width = "600" height = "441"
+	style ="
+		position: absolute;
+		top: 10px;
+		left: 10px;
+		z-index: 1;
+		border: 1px solid #999;"> </canvas>
+	<canvas id = "id_canvas2" width = "600" height = "441"
+	style ="
+		position: absolute;
+		top: 10px;
+		left: 10px;
+		z-index: 2;
+		border: 1px solid #999;"> </canvas>
+	<canvas id = "id_canvas3" width = "150" height = "20"
+	style ="
+		position: absolute;
+		top: 400px;
+		left: 455px;
+		z-index: 3;"> </canvas>
+</body>
+</html>
