@@ -15120,11 +15120,11 @@ var $author$project$Main$update = F2(
 					$elm$core$Platform$Cmd$none)) : _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{message: 'んで終わる単語です'}),
+						{message: '辞書にある単語ですが、「ん」で終わっています'}),
 					$elm$core$Platform$Cmd$none)) : _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{message: '前の単語の最後の文字で始めてください'}),
+						{message: '辞書にある単語ですが、最初の文字が前の単語の最後の文字ではありません'}),
 					$elm$core$Platform$Cmd$none)) : _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -15342,6 +15342,13 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text('カタカナ語の収録数は少なめ')
+					])),
+				A2(
+				$elm$html$Html$li,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('ヒント：んとこ')
 					])),
 				A2(
 				$elm$html$Html$p,
