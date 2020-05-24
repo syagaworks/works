@@ -5451,7 +5451,7 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{editedMessage: _List_Nil, editingMessage: _List_Nil, hasNameInputted: false, page: $author$project$Main$Portal, userName: ''}),
+						{editedMessage: _List_Nil, editingMessage: _List_Nil, hasNameInputted: false, myMessage: '', page: $author$project$Main$Portal, userName: ''}),
 					$author$project$Main$exitRoomSender('hoge'));
 			case 'PublicRoomsRecv':
 				var rooms = msg.a;
