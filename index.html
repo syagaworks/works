@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>chat Allegro</title>
+  <title>aga works</title>
   <script src="https://www.gstatic.com/firebasejs/5.0.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/5.0.1/firebase-database.js"></script>
@@ -38,8 +38,6 @@
   var myRoomRef;
   var publicRoomsRef;
   var publicRooms;
-  var privateRoomsRef;
-  var privateRooms;
   var myEditingMsgRef
   var editedMessageRef
 
@@ -54,14 +52,6 @@
       }
     });
 
-    privateRoomsRef = firebase.database().ref().child("privateRooms");
-
-    privateRoomsRef.on('value', function(snapshot) {
-      if (snapshot.val() !== null) {
-        privateRooms = Object.keys(snapshot.val());
-      }
-    });
-
     firebase.auth().signOut();
   }
 
@@ -69,17 +59,13 @@
     isPublic = roomInfo.isPublic;
     roomID = roomInfo.roomID;
 
-    if (isPublic) {
-      publicRoomsRef.child(roomID).set(0);
-    } else {
-      privateRoomsRef.child(roomID).set(0);
-    }
-
     firebase.auth().signInAnonymously();
   });
 
   app.ports.exitRoomSender.subscribe(function(tmp) {
-    myEditingMsgRef.remove();
+    if(myEditingMsgRef!==undefined){
+      myEditingMsgRef.remove();
+    }
     firebase.auth().signOut();
   });
 
@@ -90,6 +76,18 @@
       myRoomIDsRef.set(roomID);
 
       myRoomRef = firebase.database().ref().child("rooms").child(roomID);
+
+      myRoomRef.child("isPublic").once("value", function(snapshot){
+        console.log(snapshot.val());
+        if(snapshot.val()===null){
+          myRoomRef.child("isPublic").set(isPublic);
+          if(isPublic){
+            publicRoomsRef.child(roomID).set(0);
+          }
+        }else{
+          app.ports.isPublicReceiver.send(snapshot.val());
+        }
+      });
 
       var editingMessageRef = firebase.database().ref().child(`rooms/${roomID}/editingMsg`);
       editedMessageRef = firebase.database().ref().child(`rooms/${roomID}/editedMsg`);
